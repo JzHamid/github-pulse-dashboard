@@ -24,7 +24,7 @@ export default function RootLayout({
                   API Pulse Dashboard
                 </p>
                 <p className="mt-2 text-sm text-zinc-400">
-                  Public API demos for the Vibe Coder OJT challenge.
+                  Public dashboards for GitHub, crypto, and weather APIs.
                 </p>
               </div>
               <AppNav />
