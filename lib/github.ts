@@ -1,3 +1,5 @@
+import type { ApiPreview } from "@/lib/api-preview";
+
 export const DEFAULT_USERNAME = "JzHamid";
 
 const GITHUB_API_BASE = "https://api.github.com";
@@ -93,44 +95,6 @@ export type GitHubInsights = {
   recentRepositories: GitHubRepo[];
   bestPerformingRepo: GitHubRepo | null;
   mostRecentlyUpdatedRepo: GitHubRepo | null;
-};
-
-export type ApiPreview = {
-  requests: Array<{
-    label: string;
-    method: "GET";
-    url: string;
-    status: number | null;
-  }>;
-  response: {
-    profile?: {
-      login: string;
-      name: string | null;
-      publicRepos: number;
-      followers: number;
-      following: number;
-    };
-    insights?: {
-      totalRepos: number;
-      totalStars: number;
-      totalForks: number;
-      mostUsedLanguage: string | null;
-      bestPerformingRepo: string | null;
-      mostRecentlyUpdatedRepo: string | null;
-      languageCounts: LanguageCount[];
-    };
-    repositoriesPreview?: Array<{
-      name: string;
-      stars: number;
-      forks: number;
-      language: string | null;
-      updatedAt: string;
-    }>;
-    error?: {
-      message: string;
-      type: GitHubError["type"];
-    };
-  };
 };
 
 export type GitHubError = {

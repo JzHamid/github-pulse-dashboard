@@ -5,9 +5,13 @@ import { useRouter } from "next/navigation";
 
 type SearchFormProps = {
   initialUsername: string;
+  actionPath?: string;
 };
 
-export function SearchForm({ initialUsername }: SearchFormProps) {
+export function SearchForm({
+  initialUsername,
+  actionPath = "/github",
+}: SearchFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -26,7 +30,7 @@ export function SearchForm({ initialUsername }: SearchFormProps) {
     }
 
     startTransition(() => {
-      router.push(`/?username=${encodeURIComponent(nextUsername)}`);
+      router.push(`${actionPath}?username=${encodeURIComponent(nextUsername)}`);
     });
   }
 

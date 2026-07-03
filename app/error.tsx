@@ -8,8 +8,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#07080d] px-5 text-white">
-      <section className="w-full max-w-xl rounded-lg border border-white/10 bg-white/[0.045] p-6">
+      <section className="rounded-lg border border-white/10 bg-white/[0.045] p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-300">
           Runtime error
         </p>
@@ -28,6 +27,5 @@ export default function Error({
           Try again
         </button>
       </section>
-    </main>
   );
 }

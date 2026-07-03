@@ -1,32 +1,43 @@
-# GitHub Pulse Dashboard
+# API Pulse Dashboard
 
-GitHub Pulse Dashboard is a small API-powered developer dashboard built for an
-OJT application challenge. It looks up a public GitHub profile and turns the
-profile and repository response into a compact set of useful insights.
+API Pulse Dashboard is a multi-API public dashboard built for the Vibe Coder
+OJT optional challenge. It demonstrates how quickly a useful developer-tool
+style product can be built from public APIs with clean UI states, typed data
+handling, and route-handler based integration points.
 
 ## What I Built
 
-- A dark, responsive dashboard UI for searching a GitHub username.
-- Public GitHub profile lookup with avatar, bio, company, location, follower
-  counts, repo count, and profile link.
-- Repository insights for total stars, total forks, most-used language, top
-  repositories by stars, recently updated repositories, and language counts.
-- A request/response preview panel that makes the app feel like a developer
-  tool.
-- Loading, empty, not-found, rate-limit, and unexpected-error states.
+- A dark, responsive dashboard shell with navigation for three API modules.
+- A home overview page that explains the modules and their server routes.
+- GitHub Pulse for profile and repository insights.
+- Crypto Pulse for market snapshots across BTC, ETH, SOL, BNB, and XRP.
+- Weather Pulse for preset city weather and forecast previews.
+- Request/response preview panels for each API module.
+- Loading, empty, invalid input, rate-limit, and error states.
 
-The default example username is `JzHamid`, so the dashboard shows data as soon
-as it loads.
+## APIs Used
 
-## Tools Used
+- GitHub public REST API for developer profiles and repositories.
+- CoinGecko public API for crypto market prices.
+- Open-Meteo public API for current weather and daily forecasts.
 
-- Next.js App Router
-- TypeScript
-- Tailwind CSS
-- GitHub public REST API
-- Built-in `fetch`
+No database, authentication, paid API keys, or secrets are required.
 
-No database, authentication, API keys, or extra dependencies are required.
+## App Routes
+
+- `/` - overview of all API modules.
+- `/github` - GitHub username lookup, defaulting to `JzHamid`.
+- `/crypto` - crypto market dashboard.
+- `/weather` - weather dashboard with preset city buttons.
+
+## Server Routes
+
+- `/api/github?username=JzHamid`
+- `/api/crypto`
+- `/api/weather?city=Manila`
+
+These routes keep API fetching organized and make the app easier to review as
+an integration challenge.
 
 ## Run Locally
 
@@ -35,36 +46,44 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser.
+Open `http://localhost:3000` or the port shown by Next.js.
 
-For production checks:
+Production checks:
 
 ```bash
 npm run build
 npm run lint
 ```
 
+On Windows PowerShell, if script execution blocks `npm.ps1`, use:
+
+```bash
+npm.cmd run build
+npm.cmd run lint
+```
+
 ## What The App Demonstrates
 
-- Server-side data fetching in the Next.js App Router.
-- Typed API response handling and normalized view models.
-- Clean component boundaries for profile, search, insights, repository tables,
-  API preview, and states.
-- Defensive handling for invalid users, empty repository lists, and GitHub
-  unauthenticated API rate limits.
-- A polished MVP that stays intentionally small and explainable.
+- Next.js App Router pages and route handlers.
+- TypeScript API response normalization.
+- Public API integration without secrets.
+- Basic input validation for usernames and weather presets.
+- Safe error handling for not-found, rate-limit, empty, and network states.
+- Responsive Tailwind CSS dashboard components.
+- Developer-focused request/response preview panels.
 
 ## AI-Assisted Development
 
-AI assistance was used to inspect the starter project, plan the MVP scope, build
-the component structure, organize GitHub API fetching, and refine the dashboard
-copy and UI states. The implementation was kept simple and reviewed against the
-challenge constraints: no secrets, no API keys, no database, and no unnecessary
-dependencies.
+AI assistance was used to inspect the starter project, plan the product
+expansion, confirm public API endpoint shapes, organize reusable components,
+write typed integration helpers, and iterate on build/lint issues. The
+implementation stayed within the challenge constraints: public APIs only, no
+auth, no paid keys, no secrets, and no unnecessary dependencies.
 
 ## What I Would Improve Next
 
-- Add lightweight charts for language distribution and repository activity.
-- Add a comparison mode for two GitHub users.
-- Cache successful GitHub responses for a short time to reduce rate-limit risk.
-- Add integration tests around API error handling and insight calculations.
+- Add small charts for crypto movement and weather trends.
+- Add optional city search with Open-Meteo geocoding.
+- Cache successful API responses briefly to reduce rate-limit risk.
+- Add automated tests for API route validation and insight calculations.
+- Add comparison views, such as GitHub user vs user or city vs city.

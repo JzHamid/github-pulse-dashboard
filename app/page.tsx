@@ -1,98 +1,125 @@
-import { ApiPreview } from "@/components/ApiPreview";
-import { InsightCards } from "@/components/InsightCards";
-import { ProfileCard } from "@/components/ProfileCard";
-import { RepoInsights } from "@/components/RepoInsights";
-import { SearchForm } from "@/components/SearchForm";
-import { StateMessage } from "@/components/StateMessage";
-import {
-  getGitHubDashboard,
-  normalizeUsername,
-} from "@/lib/github";
+import Link from "next/link";
+import { BadgeList } from "@/components/BadgeList";
 
-export const dynamic = "force-dynamic";
+const modules = [
+  {
+    title: "GitHub Pulse",
+    href: "/github",
+    description:
+      "Profile lookup, repository stats, top repos, language mix, recent activity, and API preview.",
+    endpoint: "/api/github?username=JzHamid",
+    badges: ["GitHub API", "No API Key", "Server Route"],
+  },
+  {
+    title: "Crypto Pulse",
+    href: "/crypto",
+    description:
+      "Market snapshots for BTC, ETH, SOL, BNB, and XRP with movers, volume, market cap, and raw response.",
+    endpoint: "/api/crypto",
+    badges: ["CoinGecko", "Public API", "Demo Data"],
+  },
+  {
+    title: "Weather Pulse",
+    href: "/weather",
+    description:
+      "Current conditions and forecast previews for preset cities using Open-Meteo with no API key.",
+    endpoint: "/api/weather?city=Manila",
+    badges: ["Open-Meteo", "No API Key", "Forecast"],
+  },
+];
 
-type PageProps = {
-  searchParams?: Promise<{
-    username?: string | string[];
-  }>;
-};
-
-export default async function Home({ searchParams }: PageProps) {
-  const params = searchParams ? await searchParams : {};
-  const username = normalizeUsername(getFirstParam(params.username));
-  const result = await getGitHubDashboard(username);
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#07080d] px-5 py-6 text-white sm:px-8 sm:py-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <header className="rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-2xl shadow-black/20 sm:p-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_520px] lg:items-end">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-                GitHub Pulse Dashboard
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                Developer profile intelligence from public GitHub data.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-400 sm:text-base">
-                Search a GitHub username to inspect profile signals,
-                repository momentum, language mix, and the raw API response
-                behind the dashboard.
-              </p>
-            </div>
-            <SearchForm initialUsername={username} />
-          </div>
-        </header>
+    <>
+      <section className="rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-2xl shadow-black/20 sm:p-6">
+        <div className="max-w-4xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Multi-API dashboard
+          </p>
+          <h1 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-5xl">
+            API Pulse Dashboard turns public endpoints into useful product
+            surfaces.
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-400 sm:text-base">
+            A compact Vibe Coder OJT demo showing public API integration,
+            validation, server route handling, error states, and clean
+            request/response previews.
+          </p>
+        </div>
+        <div className="mt-6">
+          <BadgeList
+            items={[
+              "Next.js App Router",
+              "TypeScript",
+              "Tailwind CSS",
+              "Public APIs",
+              "No Secrets",
+            ]}
+          />
+        </div>
+      </section>
 
-        {result.ok ? (
-          <>
-            <section className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-              <ProfileCard profile={result.profile} />
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                      Profile pulse
-                    </p>
-                    <h2 className="mt-2 text-xl font-semibold text-white">
-                      Snapshot for @{result.profile.login}
-                    </h2>
-                  </div>
-                  <a
-                    className="rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-emerald-300/45 hover:text-emerald-100"
-                    href={result.profile.htmlUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    Open profile
-                  </a>
-                </div>
-                <InsightCards insights={result.insights} />
+      <section className="grid gap-4 lg:grid-cols-3">
+        {modules.map((module) => (
+          <Link
+            className="group rounded-lg border border-white/10 bg-white/[0.045] p-5 transition hover:border-emerald-300/45 hover:bg-white/[0.07]"
+            href={module.href}
+            key={module.title}
+          >
+            <div className="flex h-full flex-col gap-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                  API module
+                </p>
+                <h2 className="mt-3 text-2xl font-semibold text-white">
+                  {module.title}
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-zinc-400">
+                  {module.description}
+                </p>
               </div>
-            </section>
+              <BadgeList items={module.badges} />
+              <code className="mt-auto block overflow-x-auto whitespace-nowrap border-t border-white/10 pt-4 text-xs text-zinc-500">
+                {module.endpoint}
+              </code>
+            </div>
+          </Link>
+        ))}
+      </section>
 
-            <RepoInsights insights={result.insights} />
-            <ApiPreview preview={result.apiPreview} />
-          </>
-        ) : (
-          <>
-            <StateMessage
-              message={result.error.message}
-              tone={result.error.type}
-              title={result.error.title}
-            />
-            <ApiPreview preview={result.apiPreview} />
-          </>
-        )}
-      </div>
-    </main>
+      <section className="grid gap-4 lg:grid-cols-[1fr_1.2fr]">
+        <div className="rounded-lg border border-white/10 bg-zinc-950/60 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+            Demo focus
+          </p>
+          <h2 className="mt-3 text-xl font-semibold text-white">
+            Built to show fast API product work
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-zinc-400">
+            Each module uses public data, a server route, defensive error
+            handling, responsive cards, and a raw response panel so the
+            integration is visible to technical reviewers.
+          </p>
+        </div>
+        <div className="rounded-lg border border-white/10 bg-zinc-950/60 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+            Route map
+          </p>
+          <div className="mt-4 grid gap-3 text-sm">
+            {modules.map((module) => (
+              <div
+                className="grid gap-2 border-b border-white/10 pb-3 last:border-b-0 last:pb-0 sm:grid-cols-[150px_1fr]"
+                key={module.endpoint}
+              >
+                <span className="font-medium text-white">{module.title}</span>
+                <code className="overflow-x-auto whitespace-nowrap text-zinc-500">
+                  {module.endpoint}
+                </code>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
-}
-
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
 }
