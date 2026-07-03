@@ -14,17 +14,17 @@ const modules = [
     title: "Crypto Pulse",
     href: "/crypto",
     description:
-      "Market snapshots for BTC, ETH, SOL, BNB, and XRP with movers, volume, market cap, and raw response.",
-    endpoint: "/api/crypto",
-    badges: ["CoinGecko", "Public API", "Demo Data"],
+      "Searchable market snapshots for custom coin watchlists with movers, volume, market cap, and raw response.",
+    endpoint: "/api/crypto?coins=bitcoin,solana",
+    badges: ["CoinGecko", "Autocomplete", "Demo Data"],
   },
   {
     title: "Weather Pulse",
     href: "/weather",
     description:
-      "Current conditions and forecast previews for preset cities using Open-Meteo with no API key.",
-    endpoint: "/api/weather?city=Manila",
-    badges: ["Open-Meteo", "No API Key", "Forecast"],
+      "Current conditions and forecast previews for searched or preset locations using Open-Meteo with no API key.",
+    endpoint: "/api/weather?location=Manila",
+    badges: ["Open-Meteo", "Geocoding", "Forecast"],
   },
 ];
 
@@ -41,9 +41,9 @@ export default function HomePage() {
             surfaces.
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-400 sm:text-base">
-            A compact Vibe Coder OJT demo showing public API integration,
-            validation, server route handling, error states, and clean
-            request/response previews.
+            A compact developer demo showing public API integration,
+            autocomplete search, validation, server route handling, error
+            states, and clean request/response previews.
           </p>
         </div>
         <div className="mt-6">

@@ -1,35 +1,59 @@
 import Link from "next/link";
 import { ApiPreview } from "@/components/ApiPreview";
+import { AutocompleteSearchForm } from "@/components/AutocompleteSearchForm";
 import { PageHeader } from "@/components/PageHeader";
 import { StateMessage } from "@/components/StateMessage";
 import { WeatherLocalTime } from "@/components/WeatherLocalTime";
 import type { ForecastDay, WeatherPulse } from "@/lib/weather";
-import { getWeatherPulse, WEATHER_PRESETS } from "@/lib/weather";
+import {
+  formatWeatherLocation,
+  getWeatherPulse,
+  WEATHER_PRESETS,
+} from "@/lib/weather";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   searchParams?: Promise<{
     city?: string | string[];
+    location?: string | string[];
   }>;
 };
 
 export default async function WeatherPulsePage({ searchParams }: PageProps) {
   const params = searchParams ? await searchParams : {};
-  const city = getFirstParam(params.city);
-  const result = await getWeatherPulse(city);
+  const location = getFirstParam(params.location) ?? getFirstParam(params.city);
+  const result = await getWeatherPulse(location);
+  const searchValue = result.ok
+    ? formatWeatherLocation(result.pulse.location)
+    : getWeatherSearchValue(location);
 
   return (
     <>
       <PageHeader
+        action={
+          <AutocompleteSearchForm
+            actionPath="/weather"
+            buttonLabel="Check weather"
+            helperText="Search a city or choose one of the preset locations below."
+            initialValue={searchValue}
+            key={searchValue}
+            label="Weather location"
+            paramName="location"
+            pendingLabel="Checking"
+            placeholder="Manila, Tokyo, London"
+            suggestionsEndpoint="/api/weather/search"
+            tone="sky"
+          />
+        }
         badges={["Open-Meteo", "Public API", "No API Key", "Server Route"]}
-        description="Switch between preset cities and inspect current temperature, wind speed, WMO condition summaries, forecast preview, and raw Open-Meteo response data."
+        description="Search locations, switch between presets, and inspect current temperature, wind speed, WMO condition summaries, forecast preview, and raw Open-Meteo response data."
         eyebrow="Weather Pulse"
         tone="sky"
-        title="A city weather dashboard powered by Open-Meteo."
+        title="A searchable weather dashboard powered by Open-Meteo."
       />
 
-      <CityPresetNav selectedCity={result.ok ? result.pulse.location.city : city} />
+      <CityPresetNav selectedCity={result.ok ? result.pulse.location.city : location} />
 
       {result.ok ? (
         <>
@@ -41,7 +65,7 @@ export default async function WeatherPulsePage({ searchParams }: PageProps) {
         <>
           <StateMessage
             message={result.error.message}
-            tone={result.error.type === "empty" ? "empty" : "api-error"}
+            tone={getWeatherErrorTone(result.error.type)}
             title={result.error.title}
           />
           <ApiPreview preview={result.apiPreview} />
@@ -75,7 +99,7 @@ function CityPresetNav({ selectedCity }: { selectedCity?: string }) {
                     ? "rounded-lg border border-sky-300/40 bg-sky-300/10 px-3 py-2 text-sm font-semibold text-sky-100"
                     : "rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-zinc-300 transition hover:border-white/20 hover:text-white"
                 }
-                href={`/weather?city=${encodeURIComponent(preset.city)}`}
+                href={`/weather?location=${encodeURIComponent(preset.city)}`}
                 key={preset.city}
               >
                 {preset.city}
@@ -227,4 +251,28 @@ function formatShortDate(value: string) {
     month: "short",
     weekday: "short",
   }).format(new Date(value));
+}
+
+function getWeatherSearchValue(value?: string) {
+  if (!value || value.startsWith("geo|")) {
+    return "Manila";
+  }
+
+  return value;
+}
+
+function getWeatherErrorTone(errorType: string) {
+  if (errorType === "not-found") {
+    return "not-found";
+  }
+
+  if (errorType === "network-error") {
+    return "network-error";
+  }
+
+  if (errorType === "empty") {
+    return "empty";
+  }
+
+  return "api-error";
 }

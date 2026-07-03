@@ -1,4 +1,5 @@
 import { ApiPreview } from "@/components/ApiPreview";
+import { AutocompleteSearchForm } from "@/components/AutocompleteSearchForm";
 import { PageHeader } from "@/components/PageHeader";
 import { StateMessage } from "@/components/StateMessage";
 import type { CryptoAsset, CryptoInsights } from "@/lib/crypto";
@@ -6,17 +7,44 @@ import { getCryptoPulse } from "@/lib/crypto";
 
 export const dynamic = "force-dynamic";
 
-export default async function CryptoPulsePage() {
-  const result = await getCryptoPulse();
+type PageProps = {
+  searchParams?: Promise<{
+    coins?: string | string[];
+  }>;
+};
+
+export default async function CryptoPulsePage({ searchParams }: PageProps) {
+  const params = searchParams ? await searchParams : {};
+  const coinInput = getFirstParam(params.coins);
+  const result = await getCryptoPulse(coinInput);
+  const searchValue = result.ok
+    ? result.insights.assets.map((asset) => asset.id).join(", ")
+    : coinInput ?? "bitcoin, ethereum, solana, binancecoin, ripple";
 
   return (
     <>
       <PageHeader
+        action={
+          <AutocompleteSearchForm
+            actionPath="/crypto"
+            buttonLabel="Track coins"
+            helperText="Type a coin name, symbol, or CoinGecko id. Use commas for a small watchlist."
+            initialValue={searchValue}
+            key={searchValue}
+            label="Crypto coins"
+            multiValue
+            paramName="coins"
+            pendingLabel="Loading"
+            placeholder="bitcoin, ethereum, solana"
+            suggestionsEndpoint="/api/crypto/search"
+            tone="amber"
+          />
+        }
         badges={["CoinGecko", "Public API", "No API Key", "Server Route"]}
-        description="Track a small market watchlist for BTC, ETH, SOL, BNB, and XRP with live USD prices, 24h movement, market cap, volume, and raw API output."
+        description="Track a small market watchlist with live USD prices, 24h movement, market cap, volume, autocomplete search, and raw API output."
         eyebrow="Crypto Pulse"
         tone="amber"
-        title="A market-data dashboard powered by public crypto prices."
+        title="A searchable market-data dashboard powered by public crypto prices."
       />
 
       <p className="rounded-lg border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-100">
@@ -34,7 +62,7 @@ export default async function CryptoPulsePage() {
         <>
           <StateMessage
             message={result.error.message}
-            tone={result.error.type === "empty" ? "empty" : result.error.type}
+            tone={getCryptoErrorTone(result.error.type)}
             title={result.error.title}
           />
           <ApiPreview preview={result.apiPreview} />
@@ -99,7 +127,9 @@ function CryptoSummary({ insights }: { insights: CryptoInsights }) {
     {
       label: "Tracked assets",
       value: String(insights.assets.length),
-      detail: "BTC, ETH, SOL, BNB, XRP",
+      detail:
+        insights.assets.map((asset) => asset.symbol).join(", ") ||
+        "No assets selected",
       accent: "border-amber-300/60",
     },
     {
@@ -131,21 +161,29 @@ function CryptoSummary({ insights }: { insights: CryptoInsights }) {
   ];
 
   return (
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-      {cards.map((card) => (
-        <article
-          className={`rounded-lg border border-white/10 border-t-2 ${card.accent} bg-white/[0.045] p-4`}
-          key={card.label}
-        >
-          <p className="text-xs uppercase tracking-[0.14em] text-zinc-500">
-            {card.label}
-          </p>
-          <h2 className="mt-3 min-h-8 break-words text-xl font-semibold leading-tight text-white">
-            {card.value}
-          </h2>
-          <p className="mt-3 text-sm leading-5 text-zinc-400">{card.detail}</p>
-        </article>
-      ))}
+    <section>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        {cards.map((card) => (
+          <article
+            className={`rounded-lg border border-white/10 border-t-2 ${card.accent} bg-white/[0.045] p-4`}
+            key={card.label}
+          >
+            <p className="text-xs uppercase tracking-[0.14em] text-zinc-500">
+              {card.label}
+            </p>
+            <h2 className="mt-3 min-h-8 break-words text-xl font-semibold leading-tight text-white">
+              {card.value}
+            </h2>
+            <p className="mt-3 text-sm leading-5 text-zinc-400">{card.detail}</p>
+          </article>
+        ))}
+      </div>
+      {insights.unresolved.length > 0 ? (
+        <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+          CoinGecko could not resolve: {insights.unresolved.join(", ")}.
+          Showing the matched assets above.
+        </p>
+      ) : null}
     </section>
   );
 }
@@ -275,4 +313,28 @@ function formatDate(value: string) {
     month: "short",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function getFirstParam(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}
+
+function getCryptoErrorTone(errorType: string) {
+  if (errorType === "rate-limit") {
+    return "rate-limit";
+  }
+
+  if (errorType === "network-error") {
+    return "network-error";
+  }
+
+  if (errorType === "empty") {
+    return "empty";
+  }
+
+  return "api-error";
 }

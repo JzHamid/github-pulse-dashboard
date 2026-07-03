@@ -10,8 +10,8 @@ handling, and route-handler based integration points.
 - A dark, responsive dashboard shell with navigation for three API modules.
 - A home overview page that explains the modules and their server routes.
 - GitHub Pulse for profile and repository insights.
-- Crypto Pulse for market snapshots across BTC, ETH, SOL, BNB, and XRP.
-- Weather Pulse for preset city weather and forecast previews.
+- Crypto Pulse for searchable market snapshots across custom coin watchlists.
+- Weather Pulse for searched or preset location weather and forecast previews.
 - Request/response preview panels for each API module.
 - Loading, empty, invalid input, rate-limit, and error states.
 
@@ -27,14 +27,16 @@ No database, authentication, paid API keys, or secrets are required.
 
 - `/` - overview of all API modules.
 - `/github` - GitHub username lookup, defaulting to `JzHamid`.
-- `/crypto` - crypto market dashboard.
-- `/weather` - weather dashboard with preset city buttons.
+- `/crypto` - crypto market dashboard with coin search and autocomplete.
+- `/weather` - weather dashboard with location search, autocomplete, and preset city buttons.
 
 ## Server Routes
 
 - `/api/github?username=JzHamid`
-- `/api/crypto`
-- `/api/weather?city=Manila`
+- `/api/crypto?coins=bitcoin,solana`
+- `/api/crypto/search?q=bit`
+- `/api/weather?location=Manila`
+- `/api/weather/search?q=tok`
 
 These routes keep API fetching organized and make the app easier to review as
 an integration challenge.
@@ -67,7 +69,8 @@ npm.cmd run lint
 - Next.js App Router pages and route handlers.
 - TypeScript API response normalization.
 - Public API integration without secrets.
-- Basic input validation for usernames and weather presets.
+- Basic input validation for usernames, coin watchlists, and locations.
+- Dependency-free autocomplete backed by public search/geocoding endpoints.
 - Safe error handling for not-found, rate-limit, empty, and network states.
 - Responsive Tailwind CSS dashboard components.
 - Developer-focused request/response preview panels.
@@ -83,7 +86,6 @@ auth, no paid keys, no secrets, and no unnecessary dependencies.
 ## What I Would Improve Next
 
 - Add small charts for crypto movement and weather trends.
-- Add optional city search with Open-Meteo geocoding.
 - Cache successful API responses briefly to reduce rate-limit risk.
 - Add automated tests for API route validation and insight calculations.
 - Add comparison views, such as GitHub user vs user or city vs city.
