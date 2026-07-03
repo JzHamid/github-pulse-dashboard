@@ -4,11 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Overview" },
-  { href: "/github", label: "GitHub Pulse" },
-  { href: "/crypto", label: "Crypto Pulse" },
-  { href: "/weather", label: "Weather Pulse" },
-];
+  { href: "/", label: "Overview", tone: "cyan" },
+  { href: "/github", label: "GitHub Pulse", tone: "emerald" },
+  { href: "/crypto", label: "Crypto Pulse", tone: "amber" },
+  { href: "/weather", label: "Weather Pulse", tone: "sky" },
+] as const;
+
+const activeToneClasses = {
+  amber:
+    "border-amber-300/40 bg-amber-300/10 text-amber-100",
+  cyan: "border-cyan-300/40 bg-cyan-300/10 text-cyan-100",
+  emerald:
+    "border-emerald-300/40 bg-emerald-300/10 text-emerald-100",
+  sky: "border-sky-300/40 bg-sky-300/10 text-sky-100",
+};
 
 export function AppNav() {
   const pathname = usePathname();
@@ -26,7 +35,7 @@ export function AppNav() {
           <Link
             className={
               isActive
-                ? "rounded-lg border border-emerald-300/40 bg-emerald-300/10 px-3 py-2 text-sm font-semibold text-emerald-100"
+                ? `rounded-lg border px-3 py-2 text-sm font-semibold ${activeToneClasses[item.tone]}`
                 : "rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-zinc-300 transition hover:border-white/20 hover:text-white"
             }
             href={item.href}

@@ -15,6 +15,7 @@ export default async function CryptoPulsePage() {
         badges={["CoinGecko", "Public API", "No API Key", "Server Route"]}
         description="Track a small market watchlist for BTC, ETH, SOL, BNB, and XRP with live USD prices, 24h movement, market cap, volume, and raw API output."
         eyebrow="Crypto Pulse"
+        tone="amber"
         title="A market-data dashboard powered by public crypto prices."
       />
 
@@ -67,7 +68,7 @@ function CryptoPriceCards({ assets }: { assets: CryptoAsset[] }) {
             <span
               className={
                 (asset.change24h ?? 0) >= 0
-                  ? "rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-xs font-medium text-emerald-100"
+                  ? "rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-xs font-medium text-amber-100"
                   : "rounded-md border border-rose-300/25 bg-rose-300/10 px-2 py-1 text-xs font-medium text-rose-100"
               }
             >
@@ -99,7 +100,7 @@ function CryptoSummary({ insights }: { insights: CryptoInsights }) {
       label: "Tracked assets",
       value: String(insights.assets.length),
       detail: "BTC, ETH, SOL, BNB, XRP",
-      accent: "border-emerald-300/60",
+      accent: "border-amber-300/60",
     },
     {
       label: "Top mover",
@@ -107,25 +108,25 @@ function CryptoSummary({ insights }: { insights: CryptoInsights }) {
       detail: insights.topMover
         ? formatPercent(insights.topMover.change24h)
         : "No movement data",
-      accent: "border-cyan-300/60",
+      accent: "border-yellow-300/60",
     },
     {
       label: "Combined market cap",
       value: formatCompactUsd(insights.totalMarketCap),
       detail: "Across displayed assets",
-      accent: "border-amber-300/60",
+      accent: "border-orange-300/60",
     },
     {
       label: "24h volume",
       value: formatCompactUsd(insights.totalVolume24h),
       detail: "Across displayed assets",
-      accent: "border-fuchsia-300/60",
+      accent: "border-amber-200/60",
     },
     {
       label: "Last updated",
       value: insights.lastUpdated ? formatTime(insights.lastUpdated) : "N/A",
       detail: insights.lastUpdated ? formatDate(insights.lastUpdated) : "No timestamp",
-      accent: "border-lime-300/60",
+      accent: "border-yellow-200/60",
     },
   ];
 
@@ -164,7 +165,7 @@ function CryptoMarketTable({ assets }: { assets: CryptoAsset[] }) {
     <section className="rounded-lg border border-white/10 bg-white/[0.045] p-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
             Price cards
           </p>
           <h2 className="mt-2 text-xl font-semibold text-white">
@@ -191,7 +192,7 @@ function CryptoMarketTable({ assets }: { assets: CryptoAsset[] }) {
               <tr className="align-top text-zinc-300" key={asset.id}>
                 <td className="py-4 pr-4">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm font-semibold text-emerald-200">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-amber-300/25 bg-amber-300/10 text-sm font-semibold text-amber-100">
                       {asset.symbol}
                     </span>
                     <div>
@@ -208,7 +209,7 @@ function CryptoMarketTable({ assets }: { assets: CryptoAsset[] }) {
                 <td
                   className={
                     (asset.change24h ?? 0) >= 0
-                      ? "px-4 py-4 font-medium text-emerald-200"
+                      ? "px-4 py-4 font-medium text-amber-200"
                       : "px-4 py-4 font-medium text-rose-200"
                   }
                 >

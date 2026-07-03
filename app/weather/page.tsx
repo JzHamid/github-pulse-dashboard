@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ApiPreview } from "@/components/ApiPreview";
 import { PageHeader } from "@/components/PageHeader";
 import { StateMessage } from "@/components/StateMessage";
+import { WeatherLocalTime } from "@/components/WeatherLocalTime";
 import type { ForecastDay, WeatherPulse } from "@/lib/weather";
 import { getWeatherPulse, WEATHER_PRESETS } from "@/lib/weather";
 
@@ -24,6 +25,7 @@ export default async function WeatherPulsePage({ searchParams }: PageProps) {
         badges={["Open-Meteo", "Public API", "No API Key", "Server Route"]}
         description="Switch between preset cities and inspect current temperature, wind speed, WMO condition summaries, forecast preview, and raw Open-Meteo response data."
         eyebrow="Weather Pulse"
+        tone="sky"
         title="A city weather dashboard powered by Open-Meteo."
       />
 
@@ -54,7 +56,7 @@ function CityPresetNav({ selectedCity }: { selectedCity?: string }) {
     <section className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">
             Preset cities
           </p>
           <p className="mt-1 text-sm text-zinc-400">
@@ -70,7 +72,7 @@ function CityPresetNav({ selectedCity }: { selectedCity?: string }) {
               <Link
                 className={
                   isActive
-                    ? "rounded-lg border border-emerald-300/40 bg-emerald-300/10 px-3 py-2 text-sm font-semibold text-emerald-100"
+                    ? "rounded-lg border border-sky-300/40 bg-sky-300/10 px-3 py-2 text-sm font-semibold text-sky-100"
                     : "rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-zinc-300 transition hover:border-white/20 hover:text-white"
                 }
                 href={`/weather?city=${encodeURIComponent(preset.city)}`}
@@ -95,7 +97,7 @@ function WeatherSummary({ pulse }: { pulse: WeatherPulse }) {
           ? "N/A"
           : `${Math.round(pulse.current.temperature)} C`,
       detail: `${pulse.location.city}, ${pulse.location.country}`,
-      accent: "border-emerald-300/60",
+      accent: "border-sky-300/60",
     },
     {
       label: "Wind speed",
@@ -104,7 +106,7 @@ function WeatherSummary({ pulse }: { pulse: WeatherPulse }) {
           ? "N/A"
           : `${Math.round(pulse.current.windSpeed)} km/h`,
       detail: "10m wind speed",
-      accent: "border-cyan-300/60",
+      accent: "border-blue-300/60",
     },
     {
       label: "Condition",
@@ -113,17 +115,7 @@ function WeatherSummary({ pulse }: { pulse: WeatherPulse }) {
         pulse.current.weatherCode === null
           ? "No weather code"
           : `WMO code ${pulse.current.weatherCode}`,
-      accent: "border-amber-300/60",
-    },
-    {
-      label: "Observed",
-      value: pulse.current.observedAt
-        ? formatTime(pulse.current.observedAt)
-        : "N/A",
-      detail: pulse.current.observedAt
-        ? formatDate(pulse.current.observedAt)
-        : "No timestamp",
-      accent: "border-fuchsia-300/60",
+      accent: "border-cyan-300/60",
     },
   ];
 
@@ -143,6 +135,20 @@ function WeatherSummary({ pulse }: { pulse: WeatherPulse }) {
           <p className="mt-3 text-sm leading-5 text-zinc-400">{card.detail}</p>
         </article>
       ))}
+      <article className="rounded-lg border border-white/10 border-t-2 border-sky-200/60 bg-white/[0.045] p-4">
+        <p className="text-xs uppercase tracking-[0.14em] text-zinc-500">
+          Local time
+        </p>
+        <h2 className="mt-3 min-h-8 break-words text-xl font-semibold leading-tight text-white">
+          <WeatherLocalTime
+            fallbackIso={pulse.current.observedAt}
+            timeZone={pulse.timeZone}
+          />
+        </h2>
+        <p className="mt-3 text-sm leading-5 text-zinc-400">
+          Updates the minute live for {pulse.location.city}
+        </p>
+      </article>
     </section>
   );
 }
@@ -162,7 +168,7 @@ function ForecastPreview({ forecast }: { forecast: ForecastDay[] }) {
     <section className="rounded-lg border border-white/10 bg-white/[0.045] p-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">
             Forecast preview
           </p>
           <h2 className="mt-2 text-xl font-semibold text-white">
@@ -213,21 +219,6 @@ function getFirstParam(value?: string | string[]) {
 
 function formatTemperature(value: number | null) {
   return value === null ? "N/A" : `${Math.round(value)} C`;
-}
-
-function formatTime(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
 }
 
 function formatShortDate(value: string) {

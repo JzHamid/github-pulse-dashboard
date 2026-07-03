@@ -13,6 +13,7 @@ export const WEATHER_PRESETS = [
 type WeatherPreset = (typeof WEATHER_PRESETS)[number];
 
 type RawWeatherResponse = {
+  timezone?: string;
   current?: {
     time?: string;
     temperature_2m?: number;
@@ -36,6 +37,7 @@ export type ForecastDay = {
 
 export type WeatherPulse = {
   location: WeatherPreset;
+  timeZone: string | null;
   current: {
     temperature: number | null;
     windSpeed: number | null;
@@ -170,6 +172,7 @@ function normalizeWeather(
 
   return {
     location,
+    timeZone: response.timezone ?? null,
     current: {
       temperature: response.current?.temperature_2m ?? null,
       windSpeed: response.current?.wind_speed_10m ?? null,
@@ -221,6 +224,7 @@ function createWeatherPreview(
         country: pulse.location.country,
         latitude: pulse.location.latitude,
         longitude: pulse.location.longitude,
+        timeZone: pulse.timeZone,
       },
       current: pulse.current,
       forecast: pulse.forecast,
