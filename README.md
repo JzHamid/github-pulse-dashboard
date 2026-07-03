@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GitHub Pulse Dashboard
 
-## Getting Started
+GitHub Pulse Dashboard is a small API-powered developer dashboard built for an
+OJT application challenge. It looks up a public GitHub profile and turns the
+profile and repository response into a compact set of useful insights.
 
-First, run the development server:
+## What I Built
+
+- A dark, responsive dashboard UI for searching a GitHub username.
+- Public GitHub profile lookup with avatar, bio, company, location, follower
+  counts, repo count, and profile link.
+- Repository insights for total stars, total forks, most-used language, top
+  repositories by stars, recently updated repositories, and language counts.
+- A request/response preview panel that makes the app feel like a developer
+  tool.
+- Loading, empty, not-found, rate-limit, and unexpected-error states.
+
+The default example username is `JzHamid`, so the dashboard shows data as soon
+as it loads.
+
+## Tools Used
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- GitHub public REST API
+- Built-in `fetch`
+
+No database, authentication, API keys, or extra dependencies are required.
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For production checks:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run lint
+```
 
-## Learn More
+## What The App Demonstrates
 
-To learn more about Next.js, take a look at the following resources:
+- Server-side data fetching in the Next.js App Router.
+- Typed API response handling and normalized view models.
+- Clean component boundaries for profile, search, insights, repository tables,
+  API preview, and states.
+- Defensive handling for invalid users, empty repository lists, and GitHub
+  unauthenticated API rate limits.
+- A polished MVP that stays intentionally small and explainable.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## AI-Assisted Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+AI assistance was used to inspect the starter project, plan the MVP scope, build
+the component structure, organize GitHub API fetching, and refine the dashboard
+copy and UI states. The implementation was kept simple and reviewed against the
+challenge constraints: no secrets, no API keys, no database, and no unnecessary
+dependencies.
 
-## Deploy on Vercel
+## What I Would Improve Next
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Add lightweight charts for language distribution and repository activity.
+- Add a comparison mode for two GitHub users.
+- Cache successful GitHub responses for a short time to reduce rate-limit risk.
+- Add integration tests around API error handling and insight calculations.
